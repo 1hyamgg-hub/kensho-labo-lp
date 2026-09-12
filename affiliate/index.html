@@ -63,10 +63,69 @@
   }
   .copy-btn.copied { background: #4caf50; }
   footer { text-align: center; padding: 24px; font-size: 12px; color: #999; }
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7f7f8;
+  }
+  #gate .box {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 32px 28px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+  }
+  #gate .box p { font-size: 14px; color: #555; margin: 0 0 16px; }
+  #gate input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+  }
+  #gate button {
+    background: #e8794a;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #gate-error { color: #c0392b; font-size: 13px; margin-top: 10px; }
+  .redistribution-notice {
+    background: #fff8f0;
+    border: 1px solid #f0d9c0;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #7a5230;
+    margin-bottom: 24px;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="gate">
+  <form class="box" id="gate-form">
+    <p>このページはアフィリエイター様限定です。<br>ご案内したパスワードを入力してください。</p>
+    <input type="password" id="gate-pw" autocomplete="off" placeholder="パスワード">
+    <button type="submit">開く</button>
+    <p id="gate-error" style="display:none;">パスワードが違います。</p>
+  </form>
+</div>
+<div class="wrap" id="content" style="display:none">
+<div class="redistribution-notice">
+  このページ・掲載素材（バナー画像・紹介文テンプレート・体験版ダウンロード情報）は、
+  ご案内を受けたアフィリエイター様ご本人限定です。パスワード・URL・素材そのものの
+  第三者への転載・共有・再配布はご遠慮ください。
+</div>
   <header>
     <h1>kensho_labo アフィリエイター向け素材ページ</h1>
     <p>各商品のバナー画像とコピペ用紹介文テンプレートをまとめています。アフィリエイトURLは各自のリンクに置き換えてご利用ください。</p>
@@ -463,6 +522,30 @@ document.querySelectorAll('.copy-btn').forEach(function(btn) {
     }
   });
 });
+
+(function () {
+  var PASS = "kensho2026afi";
+  var KEY = "klabo_affiliate_gate_ok";
+  var gate = document.getElementById('gate');
+  var content = document.getElementById('content');
+  function unlock() {
+    gate.style.display = 'none';
+    content.style.display = '';
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+  }
+  try {
+    if (sessionStorage.getItem(KEY) === '1') { unlock(); }
+  } catch (e) {}
+  document.getElementById('gate-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = document.getElementById('gate-pw').value;
+    if (val === PASS) {
+      unlock();
+    } else {
+      document.getElementById('gate-error').style.display = '';
+    }
+  });
+})();
 </script>
 </body>
 </html>
